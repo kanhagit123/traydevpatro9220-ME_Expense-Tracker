@@ -1,77 +1,92 @@
-.App {
-    text-align: center;
-    padding: 1rem;
-    background: #2d2d2d;
-    color: white;
-    min-height: 100vh;
+.app-container {
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.balance-card {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  transition: 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.transactions {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.transactions h2 {
+  margin-bottom: 0.5rem;
+}
+
+.transactions ul {
+  list-style: none;
+  padding: 0;
+}
+
+.transactions li {
+  background: #fafafa;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transactions button {
+  margin-left: 8px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+  .button-group {
+    flex-direction: column;
   }
-  
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-  
-  .dashboard {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin: 1rem 0;
-    flex-wrap: wrap;
-  }
-  
-  .card {
-    flex: 1 1 300px;
-    min-width: 280px;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    background: #444;
-    text-align: center;
-  }
-  
-  .balance-card h2 {
-    color: #00e676;
-  }
-  
-  .expense-card h2 {
-    color: #ff5252;
-  }
-  
-  button {
-    margin-top: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  
-  .transactions {
-    margin-top: 2rem;
-    text-align: left;
-  }
-  
-  .transactions ul {
-    list-style: none;
-    padding: 0;
-  }
-  
+
   .transactions li {
-    background: #555;
-    margin: 0.5rem 0;
-    padding: 0.5rem;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  @media (max-width: 768px) {
-    .dashboard {
-      flex-direction: column;
-      align-items: center;
-    }
-    .card {
-      width: 100%;
-    }
+
+  .transactions button {
+    margin-top: 5px;
   }
-  
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}

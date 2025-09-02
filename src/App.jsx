@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import "./App.css";
- import {
+import {
   PieChart,
   Pie,
   Cell,
@@ -15,6 +14,7 @@ import "./App.css";
   YAxis,
   CartesianGrid,
 } from "recharts";
+import "./App.css"; // ✅ make sure App.css exists in src/
 
 Modal.setAppElement("#root");
 
@@ -31,15 +31,18 @@ function AppContent() {
   const [isIncomeModalOpen, setIncomeModalOpen] = useState(false);
   const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
   const [incomeAmount, setIncomeAmount] = useState("");
-  const [form, setForm] = useState({ title: "", price: "", category: "", date: "" });
-  const [editIndex, setEditIndex] = useState(null);
+  const [form, setForm] = useState({
+    title: "",
+    price: "",
+    category: "",
+    date: "",
+  });
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("balance", balance);
     localStorage.setItem("expenses", JSON.stringify(expenses));
   }, [balance, expenses]);
-
-  const totalExpenses = expenses.reduce((acc, exp) => acc + exp.price, 0);
 
   const handleAddIncome = (e) => {
     e.preventDefault();
@@ -64,66 +67,85 @@ function AppContent() {
       enqueueSnackbar("Insufficient balance!", { variant: "error" });
       return;
     }
+
     let updatedExpenses = [...expenses];
-    if (editIndex !== null) {
-      const diff = amount - expenses[editIndex].price;
+
+    if (editId !== null) {
+      // Editing an expense
+      const idx = expenses.findIndex((exp) => exp.id === editId);
+      const diff = amount - expenses[idx].price;
       if (diff > balance) {
-        enqueueSnackbar("Insufficient balance for update!", { variant: "error" });
+        enqueueSnackbar("Insufficient balance for update!", {
+          variant: "error",
+        });
         return;
       }
-      updatedExpenses[editIndex] = { title, price: amount, category, date };
+      updatedExpenses[idx] = { ...form, id: editId, price: amount };
       setBalance(balance - diff);
-      setEditIndex(null);
+      setEditId(null);
     } else {
-      updatedExpenses.push({ title, price: amount, category, date });
+      // Adding new expense
+      const newExpense = {
+        id: Date.now(),
+        title,
+        price: amount,
+        category,
+        date,
+      };
+      updatedExpenses.push(newExpense);
       setBalance(balance - amount);
     }
+
     setExpenses(updatedExpenses);
     setForm({ title: "", price: "", category: "", date: "" });
     setExpenseModalOpen(false);
     enqueueSnackbar("Expense saved!", { variant: "success" });
   };
 
-  const handleEdit = (index) => {
-    setForm(expenses[index]);
-    setEditIndex(index);
+  const handleEdit = (id) => {
+    const exp = expenses.find((exp) => exp.id === id);
+    setForm(exp);
+    setEditId(id);
     setExpenseModalOpen(true);
   };
 
-  const handleDelete = (index) => {
-    const exp = expenses[index];
+  const handleDelete = (id) => {
+    const exp = expenses.find((exp) => exp.id === id);
     setBalance(balance + exp.price);
-    setExpenses(expenses.filter((_, i) => i !== index));
+    setExpenses(expenses.filter((e) => e.id !== id));
     enqueueSnackbar("Expense deleted!", { variant: "info" });
   };
 
   const summaryData = Object.values(
     expenses.reduce((acc, exp) => {
-      acc[exp.category] = acc[exp.category] || { name: exp.category, value: 0 };
+      acc[exp.category] = acc[exp.category] || {
+        name: exp.category,
+        value: 0,
+      };
       acc[exp.category].value += exp.price;
       return acc;
     }, {})
   );
 
   return (
-    <div className="App">
+    <div className="app-container">
       <h1>Expense Tracker</h1>
+      <h2 className="balance-card">Wallet Balance: ${balance.toFixed(2)}</h2>
 
-      {/* Dashboard Section */}
-      <div className="dashboard">
-        <div className="card balance-card">
-          <h2>Wallet Balance: ₹{balance}</h2>
-          <button onClick={() => setIncomeModalOpen(true)}>+ Add Income</button>
-        </div>
-
-        <div className="card expense-card">
-          <h2>Expenses: ₹{totalExpenses}</h2>
-          <button onClick={() => setExpenseModalOpen(true)}>+ Add Expense</button>
-        </div>
+      <div className="button-group">
+        <button type="button" onClick={() => setIncomeModalOpen(true)}>
+          + Add Income
+        </button>
+        <button type="button" onClick={() => setExpenseModalOpen(true)}>
+          + Add Expense
+        </button>
       </div>
 
       {/* Income Modal */}
-      <Modal isOpen={isIncomeModalOpen} onRequestClose={() => setIncomeModalOpen(false)}>
+      <Modal
+        isOpen={isIncomeModalOpen}
+        onRequestClose={() => setIncomeModalOpen(false)}
+      >
         <h2>Add Balance</h2>
         <form onSubmit={handleAddIncome}>
           <input
@@ -138,8 +160,11 @@ function AppContent() {
       </Modal>
 
       {/* Expense Modal */}
-      <Modal isOpen={isExpenseModalOpen} onRequestClose={() => setExpenseModalOpen(false)}>
-        <h2>{editIndex !== null ? "Edit Expense" : "Add Expense"}</h2>
+      <Modal
+        isOpen={isExpenseModalOpen}
+        onRequestClose={() => setExpenseModalOpen(false)}
+      >
+        <h2>{editId !== null ? "Edit Expense" : "Add Expense"}</h2>
         <form onSubmit={handleAddExpense}>
           <input
             name="title"
@@ -174,24 +199,26 @@ function AppContent() {
             onChange={(e) => setForm({ ...form, date: e.target.value })}
             required
           />
-          <button type="submit">Save</button>
+          <button type="submit">
+            {editId !== null ? "Update Expense" : "Add Expense"}
+          </button>
         </form>
       </Modal>
 
-      {/* Transactions Section */}
+      {/* Expenses Section (fix for Cypress) */}
       <div className="transactions">
-        <h2>Recent Transactions</h2>
+        <h2>Expenses</h2>
         {expenses.length === 0 ? (
           <p>No expenses added yet.</p>
         ) : (
           <ul>
-            {expenses.map((exp, idx) => (
-              <li key={idx}>
-                {exp.title} - ₹{exp.price} - {exp.category} - {exp.date}
-                <button onClick={() => handleEdit(idx)}>
+            {expenses.map((exp) => (
+              <li key={exp.id}>
+                {exp.title} - ${exp.price} - {exp.category} - {exp.date}
+                <button onClick={() => handleEdit(exp.id)}>
                   <FaEdit />
                 </button>
-                <button onClick={() => handleDelete(idx)}>
+                <button onClick={() => handleDelete(exp.id)}>
                   <FaTrash />
                 </button>
               </li>
@@ -202,7 +229,7 @@ function AppContent() {
 
       {/* Charts */}
       <h2>Expense Summary</h2>
-      <PieChart width={350} height={300}>
+      <PieChart width={400} height={300}>
         <Pie
           data={summaryData}
           dataKey="value"
@@ -221,7 +248,7 @@ function AppContent() {
       </PieChart>
 
       <h2>Expense Trends</h2>
-      <BarChart width={350} height={300} data={summaryData}>
+      <BarChart width={500} height={300} data={summaryData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
