@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import {
+import "./App.css";
+ import {
   PieChart,
   Pie,
   Cell,
@@ -30,18 +31,15 @@ function AppContent() {
   const [isIncomeModalOpen, setIncomeModalOpen] = useState(false);
   const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
   const [incomeAmount, setIncomeAmount] = useState("");
-  const [form, setForm] = useState({
-    title: "",
-    price: "",
-    category: "",
-    date: "",
-  });
+  const [form, setForm] = useState({ title: "", price: "", category: "", date: "" });
   const [editIndex, setEditIndex] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("balance", balance);
     localStorage.setItem("expenses", JSON.stringify(expenses));
   }, [balance, expenses]);
+
+  const totalExpenses = expenses.reduce((acc, exp) => acc + exp.price, 0);
 
   const handleAddIncome = (e) => {
     e.preventDefault();
@@ -110,20 +108,22 @@ function AppContent() {
   return (
     <div className="App">
       <h1>Expense Tracker</h1>
-      <h2>Wallet Balance: ${balance.toFixed(2)}</h2>
 
-      <button type="button" onClick={() => setIncomeModalOpen(true)}>
-        + Add Income
-      </button>
-      <button type="button" onClick={() => setExpenseModalOpen(true)}>
-        + Add Expense
-      </button>
+      {/* Dashboard Section */}
+      <div className="dashboard">
+        <div className="card balance-card">
+          <h2>Wallet Balance: ₹{balance}</h2>
+          <button onClick={() => setIncomeModalOpen(true)}>+ Add Income</button>
+        </div>
+
+        <div className="card expense-card">
+          <h2>Expenses: ₹{totalExpenses}</h2>
+          <button onClick={() => setExpenseModalOpen(true)}>+ Add Expense</button>
+        </div>
+      </div>
 
       {/* Income Modal */}
-      <Modal
-        isOpen={isIncomeModalOpen}
-        onRequestClose={() => setIncomeModalOpen(false)}
-      >
+      <Modal isOpen={isIncomeModalOpen} onRequestClose={() => setIncomeModalOpen(false)}>
         <h2>Add Balance</h2>
         <form onSubmit={handleAddIncome}>
           <input
@@ -138,10 +138,7 @@ function AppContent() {
       </Modal>
 
       {/* Expense Modal */}
-      <Modal
-        isOpen={isExpenseModalOpen}
-        onRequestClose={() => setExpenseModalOpen(false)}
-      >
+      <Modal isOpen={isExpenseModalOpen} onRequestClose={() => setExpenseModalOpen(false)}>
         <h2>{editIndex !== null ? "Edit Expense" : "Add Expense"}</h2>
         <form onSubmit={handleAddExpense}>
           <input
@@ -177,22 +174,20 @@ function AppContent() {
             onChange={(e) => setForm({ ...form, date: e.target.value })}
             required
           />
-          <button type="submit">
-            {editIndex !== null ? "Update Expense" : "Add Expense"}
-          </button>
+          <button type="submit">Save</button>
         </form>
       </Modal>
 
-      {/* ✅ Transactions Section */}
+      {/* Transactions Section */}
       <div className="transactions">
-        <h2>Transactions</h2>
+        <h2>Recent Transactions</h2>
         {expenses.length === 0 ? (
           <p>No expenses added yet.</p>
         ) : (
           <ul>
             {expenses.map((exp, idx) => (
               <li key={idx}>
-                {exp.title} - {exp.price} - {exp.category} - {exp.date}
+                {exp.title} - ₹{exp.price} - {exp.category} - {exp.date}
                 <button onClick={() => handleEdit(idx)}>
                   <FaEdit />
                 </button>
@@ -207,7 +202,7 @@ function AppContent() {
 
       {/* Charts */}
       <h2>Expense Summary</h2>
-      <PieChart width={400} height={300}>
+      <PieChart width={350} height={300}>
         <Pie
           data={summaryData}
           dataKey="value"
@@ -226,7 +221,7 @@ function AppContent() {
       </PieChart>
 
       <h2>Expense Trends</h2>
-      <BarChart width={500} height={300} data={summaryData}>
+      <BarChart width={350} height={300} data={summaryData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
