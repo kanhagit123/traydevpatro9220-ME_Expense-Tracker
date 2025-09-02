@@ -1,80 +1,88 @@
+/* App.css */
+
 .app-container {
   font-family: Arial, sans-serif;
-  padding: 1rem;
-  max-width: 900px;
-  margin: auto;
-  text-align: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+  min-height: 100vh;
 }
 
+/* Headings */
 h1 {
-  margin-bottom: 1rem;
-  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
+h2 {
+  margin: 15px 0;
+}
+
+/* Balance + Expense buttons */
 .balance-card {
-  background: #f5f5f5;
-  padding: 1rem;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
 }
 
 .button-group {
   display: flex;
-  justify-content: center;
   gap: 10px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
 }
 
-button {
-  padding: 0.5rem 1rem;
+.button-group button {
+  padding: 8px 15px;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #007bff;
+  border-radius: 5px;
+  background: #1976d2;
   color: white;
-  transition: 0.2s;
+  cursor: pointer;
 }
 
-button:hover {
-  background-color: #0056b3;
+.button-group button:hover {
+  opacity: 0.9;
 }
 
-.transactions {
-  margin-top: 1rem;
-  text-align: left;
-}
-
-.transactions h2 {
-  margin-bottom: 0.5rem;
-}
-
+/* Transactions */
 .transactions ul {
   list-style: none;
   padding: 0;
 }
 
 .transactions li {
-  background: #fafafa;
-  padding: 0.6rem;
-  margin-bottom: 0.5rem;
-  border-radius: 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: white;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .transactions button {
-  margin-left: 8px;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.9rem;
+  margin-left: 5px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-/* Responsive Styles */
-@media (max-width: 600px) {
+/* Layout for charts + transactions */
+.summary-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Responsive (Mobile View) */
+@media (max-width: 768px) {
+  .summary-section {
+    grid-template-columns: 1fr;
+  }
+
   .button-group {
     flex-direction: column;
+    align-items: stretch;
   }
 
   .transactions li {
@@ -84,9 +92,5 @@ button:hover {
 
   .transactions button {
     margin-top: 5px;
-  }
-
-  h1 {
-    font-size: 1.5rem;
   }
 }

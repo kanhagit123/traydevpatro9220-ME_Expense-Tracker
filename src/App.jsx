@@ -14,7 +14,7 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import "./App.css"; // ✅ make sure App.css exists in src/
+import "./App.css";
 
 Modal.setAppElement("#root");
 
@@ -71,7 +71,6 @@ function AppContent() {
     let updatedExpenses = [...expenses];
 
     if (editId !== null) {
-      // Editing an expense
       const idx = expenses.findIndex((exp) => exp.id === editId);
       const diff = amount - expenses[idx].price;
       if (diff > balance) {
@@ -84,7 +83,6 @@ function AppContent() {
       setBalance(balance - diff);
       setEditId(null);
     } else {
-      // Adding new expense
       const newExpense = {
         id: Date.now(),
         title,
@@ -130,15 +128,26 @@ function AppContent() {
   return (
     <div className="app-container">
       <h1>Expense Tracker</h1>
-      <h2 className="balance-card">Wallet Balance: ${balance.toFixed(2)}</h2>
 
-      <div className="button-group">
-        <button type="button" onClick={() => setIncomeModalOpen(true)}>
-          + Add Income
-        </button>
-        <button type="button" onClick={() => setExpenseModalOpen(true)}>
-          + Add Expense
-        </button>
+      {/* ✅ Wallet + Expenses cards */}
+      <div className="cards">
+        <div className="card">
+          <h2>Wallet Balance</h2>
+          <p>${balance.toFixed(2)}</p>
+          <button type="button" onClick={() => setIncomeModalOpen(true)}>
+            + Add Income
+          </button>
+        </div>
+
+        <div className="card">
+          <h2>Expenses</h2>
+          <p>
+            ₹{expenses.reduce((sum, e) => sum + e.price, 0).toFixed(2)}
+          </p>
+          <button type="button" onClick={() => setExpenseModalOpen(true)}>
+            + Add Expense
+          </button>
+        </div>
       </div>
 
       {/* Income Modal */}
@@ -205,7 +214,7 @@ function AppContent() {
         </form>
       </Modal>
 
-      {/* Expenses Section (fix for Cypress) */}
+      {/* Expenses List */}
       <div className="transactions">
         <h2>Expenses</h2>
         {expenses.length === 0 ? (
