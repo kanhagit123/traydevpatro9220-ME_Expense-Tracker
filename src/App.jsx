@@ -183,16 +183,16 @@ function AppContent() {
         </form>
       </Modal>
 
-      {/* Expenses Section */}
+      {/* ✅ Transactions Section */}
       <div className="transactions">
-        <h2>Expenses</h2> {/* ✅ Cypress expects this */}
+        <h2>Transactions</h2>
         {expenses.length === 0 ? (
           <p>No expenses added yet.</p>
         ) : (
           <ul>
             {expenses.map((exp, idx) => (
               <li key={idx}>
-                {exp.title} - ${exp.price} - {exp.category} - {exp.date}
+                {exp.title} - {exp.price} - {exp.category} - {exp.date}
                 <button onClick={() => handleEdit(idx)}>
                   <FaEdit />
                 </button>
