@@ -30,7 +30,12 @@ function AppContent() {
   const [isIncomeModalOpen, setIncomeModalOpen] = useState(false);
   const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
   const [incomeAmount, setIncomeAmount] = useState("");
-  const [form, setForm] = useState({ title: "", price: "", category: "", date: "" });
+  const [form, setForm] = useState({
+    title: "",
+    price: "",
+    category: "",
+    date: "",
+  });
   const [editIndex, setEditIndex] = useState(null);
 
   useEffect(() => {
@@ -115,7 +120,10 @@ function AppContent() {
       </button>
 
       {/* Income Modal */}
-      <Modal isOpen={isIncomeModalOpen} onRequestClose={() => setIncomeModalOpen(false)}>
+      <Modal
+        isOpen={isIncomeModalOpen}
+        onRequestClose={() => setIncomeModalOpen(false)}
+      >
         <h2>Add Balance</h2>
         <form onSubmit={handleAddIncome}>
           <input
@@ -130,7 +138,10 @@ function AppContent() {
       </Modal>
 
       {/* Expense Modal */}
-      <Modal isOpen={isExpenseModalOpen} onRequestClose={() => setExpenseModalOpen(false)}>
+      <Modal
+        isOpen={isExpenseModalOpen}
+        onRequestClose={() => setExpenseModalOpen(false)}
+      >
         <h2>{editIndex !== null ? "Edit Expense" : "Add Expense"}</h2>
         <form onSubmit={handleAddExpense}>
           <input
@@ -166,13 +177,15 @@ function AppContent() {
             onChange={(e) => setForm({ ...form, date: e.target.value })}
             required
           />
-          <button type="submit">Add Expense</button>
+          <button type="submit">
+            {editIndex !== null ? "Update Expense" : "Add Expense"}
+          </button>
         </form>
       </Modal>
 
-      {/* Transactions Section */}
+      {/* Expenses Section */}
       <div className="transactions">
-        <h2>Transactions</h2>
+        <h2>Expenses</h2> {/* ✅ Cypress expects this */}
         {expenses.length === 0 ? (
           <p>No expenses added yet.</p>
         ) : (
